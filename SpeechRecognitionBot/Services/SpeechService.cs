@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Security.Principal;
 using Vosk;
 
 namespace SpeechRecognitionBot.Services
@@ -20,8 +21,11 @@ namespace SpeechRecognitionBot.Services
         {
         }
 
-        public async Task Recognize(Stream stream)
+        public async Task<string> Recognize(Stream stream)
         {
+            Stopwatch sw = new Stopwatch();
+
+            sw.Start();
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
@@ -36,7 +40,13 @@ namespace SpeechRecognitionBot.Services
                 }
             }
 
-            Console.WriteLine(_voskRecognizer.FinalResult());
+            var result = JsonConvert.DeserializeObject<SpeechResult>(_voskRecognizer.FinalResult()) !;
+
+            Console.WriteLine(result.Text);
+            sw.Stop();
+
+            Console.WriteLine("Elapsed={0}", sw.Elapsed);
+            return result.Text;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿global using System.Diagnostics;
+global using Newtonsoft.Json;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Configuration;
 global using DSharpPlus;
@@ -10,3 +11,4 @@ global using SpeechRecognitionBot.Configurations;
 global using SpeechRecognitionBot.Services;
 global using SpeechRecognitionBot.Services.Abstractions;
 global using SpeechRecognitionBot.Commands;
+global using SpeechRecognitionBot.Models;

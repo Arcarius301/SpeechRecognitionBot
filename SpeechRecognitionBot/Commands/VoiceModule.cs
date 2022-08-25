@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.VoiceNext.EventArgs;
 using Emzi0767.Utilities;
+using System.IO;
 
 namespace SpeechRecognitionBot.Commands
 {
@@ -86,18 +87,30 @@ namespace SpeechRecognitionBot.Commands
             // Console.WriteLine($"[Voice] Duration: {args.AudioDuration} ms. User: {args.User} Format: {args.AudioFormat} SSRC: {args.SSRC}");
             var time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            ulong id = 385980824639504384;
+            ulong id = 225717732946083841;
 
             if (((time - _time) < 100) && args.User is not null && args.User.Id == id)
             {
+                //Console.WriteLine(time - _time);
                 _data.AddRange(args.PcmData.Span.ToArray());
             }
             else if (((time - _time) >= 100) && args.User is not null && args.User.Id == id)
             {
+                //Console.WriteLine(time - _time);
                 MemoryStream stream = new MemoryStream(_data.ToArray());
-                await _speechService.Recognize(stream);
-                // await WriteAudioAsync(_data);
+                var result = await _speechService.Recognize(stream);
+                //await WriteAudioAsync(_data);
                 _data.Clear();
+
+                if (result.Contains(""))
+                {
+                    await PlaySound(connection, @"C:\Users\kompu\Downloads\wow.mp3");
+                }
+
+                if (result.Contains("") || result.Contains(""))
+                {
+                    await PlaySound(connection, @"C:\Users\kompu\Downloads\zxc.mp3");
+                }
             }
 
             _time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -124,6 +137,17 @@ namespace SpeechRecognitionBot.Commands
 
             ffmpeg!.StandardInput.BaseStream.Write(data.ToArray());
             ffmpeg.Dispose();
+        }
+
+        private async Task PlaySound(VoiceNextConnection connection, string path)
+        {
+            var vnext = connection.TargetChannel.Guild.GetChannel(811317355816812624);
+
+            var transmit = connection.GetTransmitSink();
+
+            var pcm = ConvertAudioToPcm(path);
+            await pcm.CopyToAsync(transmit);
+            await pcm.DisposeAsync();
         }
     }
 }

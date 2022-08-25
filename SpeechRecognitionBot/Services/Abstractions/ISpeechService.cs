@@ -3,6 +3,6 @@
     internal interface ISpeechService
     {
         public Task RunAsync();
-        public Task Recognize(Stream stream);
+        public Task<string> Recognize(Stream stream);
     }
 }
